@@ -177,6 +177,24 @@ function updateSeoMeta() {
   };
 
   schemaScript.text = JSON.stringify(schemaData, null, 2);
+
+  // 7. Favicon & Apple Touch Icon (Dynamic update based on current logo)
+  let favicon = document.querySelector('link[rel="icon"]');
+  if (!favicon) {
+    favicon = document.createElement('link');
+    favicon.rel = "icon";
+    favicon.type = "image/png";
+    document.head.appendChild(favicon);
+  }
+  favicon.href = appState.general.logoImage || "images/qimam_logo.png";
+
+  let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+  if (!appleIcon) {
+    appleIcon = document.createElement('link');
+    appleIcon.rel = "apple-touch-icon";
+    document.head.appendChild(appleIcon);
+  }
+  appleIcon.href = appState.general.logoImage || "images/qimam_logo.png";
 }
 
 // Render dynamic website elements
