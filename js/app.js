@@ -427,21 +427,21 @@ function renderSite() {
       <form id="site-contact-form" onsubmit="handleFormSubmit(event)">
         <div class="form-group">
           <label class="form-label">${lang === 'ar' ? 'الاسم بالكامل' : 'Full Name'}</label>
-          <input type="text" class="form-input" required placeholder="${lang === 'ar' ? 'أدخل اسمك هنا' : 'Enter your name'}">
+          <input type="text" id="contact-name" class="form-input" required placeholder="${lang === 'ar' ? 'أدخل اسمك هنا' : 'Enter your name'}">
         </div>
         <div class="admin-row" style="margin-bottom:0;">
           <div class="form-group">
             <label class="form-label">${lang === 'ar' ? 'رقم الهاتف' : 'Phone Number'}</label>
-            <input type="tel" class="form-input" required placeholder="${lang === 'ar' ? '05xxxxxxxx' : '05xxxxxxxx'}">
+            <input type="tel" id="contact-phone" class="form-input" required placeholder="${lang === 'ar' ? '05xxxxxxxx' : '05xxxxxxxx'}">
           </div>
           <div class="form-group">
             <label class="form-label">${lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</label>
-            <input type="email" class="form-input" required placeholder="name@company.com">
+            <input type="email" id="contact-email" class="form-input" required placeholder="name@company.com">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">${lang === 'ar' ? 'تفاصيل طلبك' : 'Your Request Details'}</label>
-          <textarea class="form-input" required placeholder="${lang === 'ar' ? 'اشرح لنا نوع المطبوعات أو الخدمات التي تحتاجها...' : 'Describe what kind of printing or services you need...'}"></textarea>
+          <textarea id="contact-message" class="form-input" required placeholder="${lang === 'ar' ? 'اكتب تفاصيل مشروعك أو الخدمة المطلوبة هنا...' : 'Enter your project details or required services here...'}"></textarea>
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%; border-radius:10px;">
           ${lang === 'ar' ? 'إرسال الطلب الآن' : 'Send Message Now'} <i class="fas fa-paper-plane"></i>
@@ -577,12 +577,45 @@ function setupScrollSpy() {
   };
 }
 
-// Contact form placeholder handler
+// Contact form handler: formats input fields and redirects to WhatsApp chat
 function handleFormSubmit(e) {
   e.preventDefault();
+  
+  const name = document.getElementById('contact-name').value;
+  const phone = document.getElementById('contact-phone').value;
+  const email = document.getElementById('contact-email').value;
+  const message = document.getElementById('contact-message').value;
+  
+  const whatsappNum = appState.contact.whatsapp || '966540618168';
+  
+  // Format message text
+  let text = '';
+  if (currentLang === 'ar') {
+    text = `السلام عليكم ورحمة الله وبركاته،\n`;
+    text += `أود الاستفسار عن خدمات شركة قمم المسار للمقاولات العامة:\n\n`;
+    text += `👤 *الاسم:* ${name}\n`;
+    text += `📞 *الهاتف:* ${phone}\n`;
+    text += `✉️ *البريد الإلكتروني:* ${email}\n\n`;
+    text += `📝 *تفاصيل الطلب:*\n${message}`;
+  } else {
+    text = `Hello Qimam Almasar Co.,\n`;
+    text += `I would like to inquire about your contracting services:\n\n`;
+    text += `👤 *Name:* ${name}\n`;
+    text += `📞 *Phone:* ${phone}\n`;
+    text += `✉️ *Email:* ${email}\n\n`;
+    text += `📝 *Request Details:*\n${message}`;
+  }
+  
+  const encodedText = encodeURIComponent(text);
+  const waUrl = `https://wa.me/${whatsappNum}?text=${encodedText}`;
+  
+  // Open WhatsApp in a new tab
+  window.open(waUrl, '_blank');
+  
   alert(currentLang === 'ar' 
-    ? 'تم إرسال طلبك بنجاح! سيتواصل معك أحد مستشارينا قريباً.' 
-    : 'Your request has been sent successfully! Our consultant will contact you shortly.');
+    ? 'تم تحضير طلبك! سيتم تحويلك الآن لتطبيق الواتساب للتواصل الفوري المباشر مع الإدارة.' 
+    : 'Your request is prepared! Redirecting you to WhatsApp for instant chat with management.');
+    
   e.target.reset();
 }
 
