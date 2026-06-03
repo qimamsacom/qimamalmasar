@@ -191,10 +191,12 @@ function renderSite() {
   // 1. Logo
   const logoBox = document.getElementById('navbar-logo');
   if (logoBox) {
+    const logoGraphic = appState.general.logoImage ? 
+      `<img src="${appState.general.logoImage}" alt="Logo" class="logo-img-tag" style="max-height: 42px; max-width: 120px; object-fit: contain; border-radius: 8px;">` :
+      `<div class="logo-icon-box"><i class="fas fa-helmet-safety"></i></div>`;
+
     logoBox.innerHTML = `
-      <div class="logo-icon-box">
-        <i class="fas fa-helmet-safety"></i>
-      </div>
+      ${logoGraphic}
       <div class="logo-text-box">
         <span class="logo-title">${lang === 'ar' ? appState.general.logoTextAr : appState.general.logoTextEn}</span>
         <span class="logo-sub">${lang === 'ar' ? appState.general.logoSubAr : appState.general.logoSubEn}</span>
@@ -459,10 +461,12 @@ function renderSite() {
   // 8. Footer
   const footerLogo = document.getElementById('footer-logo');
   if (footerLogo) {
+    const footerLogoGraphic = appState.general.logoImage ? 
+      `<img src="${appState.general.logoImage}" alt="Logo" class="logo-img-tag" style="max-height: 60px; max-width: 180px; object-fit: contain; border-radius: 8px; margin-bottom: 10px;">` :
+      `<div class="logo-icon-box" style="margin: 0 auto 10px auto;"><i class="fas fa-helmet-safety"></i></div>`;
+
     footerLogo.innerHTML = `
-      <div class="logo-icon-box" style="margin: 0 auto 10px auto;">
-        <i class="fas fa-helmet-safety"></i>
-      </div>
+      ${footerLogoGraphic}
       <h4 style="font-weight:900; font-size:1.4rem;">${lang === 'ar' ? appState.general.nameAr : appState.general.nameEn}</h4>
       <p style="color:var(--text-3); font-size:0.85rem; margin-top:4px;">${lang === 'ar' ? appState.general.logoSubAr : appState.general.logoSubEn}</p>
     `;
@@ -731,6 +735,16 @@ function showAdminDashboard() {
             <div class="form-group">
               <label class="form-label">شعار الشركة (En)</label>
               <input type="text" id="adm-logo-en" class="form-input" value="${appState.general.logoTextEn}">
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="form-group">
+              <label class="form-label">شعار الشركة بصورة (URL)</label>
+              <input type="text" id="adm-logo-img-url" class="form-input" value="${appState.general.logoImage || ''}" placeholder="يمكنك وضع رابط صورة أو رفع ملف أدناه">
+            </div>
+            <div class="form-group">
+              <label class="form-label">رفع ملف شعار جديد</label>
+              <input type="file" id="adm-logo-file-input" class="form-input" accept="image/*" onchange="handleLogoUpload(event)">
             </div>
           </div>
           <div class="form-group">
@@ -1134,6 +1148,7 @@ function saveAdminData() {
   appState.general.nameEn = document.getElementById('adm-name-en').value;
   appState.general.logoTextAr = document.getElementById('adm-logo-ar').value;
   appState.general.logoTextEn = document.getElementById('adm-logo-en').value;
+  appState.general.logoImage = document.getElementById('adm-logo-img-url').value;
   
   appState.auth.username = document.getElementById('adm-auth-user').value;
   appState.auth.password = document.getElementById('adm-auth-pass').value;
@@ -1374,6 +1389,24 @@ function animateCount(element, targetVal, suffix) {
   }
   
   window.requestAnimationFrame(step);
+}
+
+// Handle Logo Upload (base64 conversion)
+function handleLogoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    const urlInput = document.getElementById('adm-logo-img-url');
+    if (urlInput) {
+      urlInput.value = base64;
+    }
+    appState.general.logoImage = base64;
+    saveState();
+    renderSite();
+  };
+  reader.readAsDataURL(file);
 }
 
 // App Launch
