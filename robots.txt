@@ -1,0 +1,26 @@
+# --------------------------------------------------------------------------
+# Robots.txt for Qimam Almasar Co. | شركة قمم المسار للمقاولات العامة
+# Automated SEO Optimization Engine - Last Updated: 2026-06-03
+# Target Domain: https://qimamsa.com
+# --------------------------------------------------------------------------
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /config/
+Disallow: /backup/
+Disallow: *.json
+Disallow: *.log
+
+# Crawl-delay for non-critical search spiders
+User-agent: YandexBot
+Crawl-delay: 5
+
+User-agent: Baiduspider
+Crawl-delay: 10
+
+# Host declaration
+Host: qimamsa.com
+
+# Sitemap URL Location
+Sitemap: https://qimamsa.com/sitemap.xml
